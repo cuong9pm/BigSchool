@@ -43,5 +43,31 @@ namespace BigSchool.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        public ActionResult Attending()
+        {
+            BigSchoolDB con = new BigSchoolDB();
+            ApplicationUser currentUser = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            var ListAttendances = con.Attendances.Where(p => p.Attendee == currentUser.Id).ToList();
+            var courses = new List<Course>();
+            foreach (Attendance temp in ListAttendances)
+            {
+                Course objCourse = temp.Course;
+                objCourse.LectureName = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(objCourse.LectureId).Name;
+                courses.Add(objCourse);
+            }
+            return View(courses);
+        }
+        public ActionResult Mine()
+        {
+            BigSchoolDB con = new BigSchoolDB();
+            ApplicationUser currentUser = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            var courses = con.Courses.Where(c =>c.LectureId == currentUser.Id && c.Datetime > DateTime.Now).ToList();
+           
+            foreach (Course i in courses )
+            {
+                i.LectureName = currentUser.Name;
+            }
+            return View(courses);
+        }
     }
 }
