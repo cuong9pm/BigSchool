@@ -14,29 +14,31 @@
     <ul class="course">
         @foreach (var course in Model)
         {
-            <li>
-                <div class="date">
-                    <div class="month">
-                        @course.Datetime.ToString("MM")
-                    </div>
-                    <div class="day">
-                        @course.Datetime.ToString("dd")
-                    </div>
+        <li>
+            <div class="date">
+                <div class="month">
+                    @course.Datetime.ToString("MM")
                 </div>
-                <div class="details">
-                    <span class="lecture">
-                        @course.LectureName
+                <div class="day">
+                    @course.Datetime.ToString("dd")
+                </div>
+            </div>
+            <div class="details">
+                <span class="lecture">
+                    @course.LectureName
+                </span>
+                <div>
+                    <span class="category">
+                        @course.Category.Name
                     </span>
-                    <div>
-                        <span class="category">
-                            @course.Category.Name
-                        </span>
-                    </div>
-                    <div class="action">
-                        <a href="">Edit</a>
-                        <a href="">Delete</a>
-                    </div>
                 </div>
-            </li>
+               
+            </div>
+            <div class="action">
+                <a href="@Url.Action("Edit", "Courses", new { id = course.Id })">Edit</a>
+                <a href="@Url.Action("Delete", "Courses", new { id = course.Id })">Delete</a>
+            </div>
+        </li>
         }
     </ul>
+   
