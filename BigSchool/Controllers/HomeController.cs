@@ -16,10 +16,25 @@ namespace BigSchool.Controllers
 
             BigSchoolDB con = new BigSchoolDB();
             var upcommingcourse = con.Courses.Where(p => p.Datetime > DateTime.Now).OrderBy(p => p.Datetime).ToList();
+            var userID = User.Identity.GetUserId();
             foreach (Course i in upcommingcourse)
             {
                 ApplicationUser user = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(i.LectureId);
                 i.Name = user.Name;
+                if (userID != null)
+                {
+                    i.isLogin = true;
+                    //ktra user đó chưa tham gia khóa học 
+                    Attendance find = con.Attendances.FirstOrDefault(p =>
+                   p.CourseId == i.Id && p.Attendee == userID);
+                    if (find == null)
+                        i.isShowGoing = true;
+                    //ktra user đã theo dõi giảng viên của khóa học ? 
+                    Following findFollow = con.Followings.FirstOrDefault(p =>
+                   p.FollowerId == userID && p.FolloweeId == i.LectureId);
+                    if (findFollow == null)
+                        i.isShowFollow = true;
+                }
             }
             return View(upcommingcourse);
         }
